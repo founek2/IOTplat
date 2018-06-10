@@ -50,7 +50,9 @@ router.post("/manageData", function(req, res, next) {
                                                       })
                                                 );
                                     } else {
-                                          throw "error";
+								res.send({
+									status: "Zařízení nepřijalo data"
+							    })
                                     }
                               })
                               .catch(e => {

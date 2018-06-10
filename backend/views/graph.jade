@@ -1,0 +1,31 @@
+extends layout
+block header
+    script(src='/javascripts/Chart.bundle.min.js')
+    script(src='/javascripts/moment.min.js')
+    script(src='/javascripts/graph.js')
+block content
+      h1.center= title
+      .data.hidden
+            = JSON.stringify(data)
+      .labels.hidden
+            = JSON.stringify(labels)
+      div
+            canvas(id="ctx")
+      .timeLine
+            span(class="absoluteLine")
+            .montBefore
+                  span měsíc
+            .10daysBefore
+                  span 10 dní
+            .3daysBefore
+                  span 3 dny
+            .dayBefore 
+                  span den
+            .12hoursBefore
+                  span 12 hodin
+            .6hoursBefore
+                  span 6 hodin
+            .now
+                  span nyní
+            
+            

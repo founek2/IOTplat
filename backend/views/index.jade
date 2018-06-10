@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  each doc in docs
+    .container
+      h1= doc.title
+      p= doc.body
+        div
+          if(doc.data.length > 0)
+            each recKey in Object.keys(doc.data[0])
+              if(recKey !== "created")
+                - var d = new Date()
+                a(href="/showGraph?id="+doc._id+"&sensor="+recKey+"&targetTime="+ d.setHours(d.getHours() -1))
+                  h3= recKey + "= "
+                    = doc.data[0][recKey].value + "" + doc.data[0][recKey].unit
+              else
+                - var d = new Date(doc.data[0][recKey])
+                p= d.getDate() + ". " + (d.getMonth()+1) + ". " + d.getHours() + ":" + ('0'+d.getMinutes()).slice(-2)

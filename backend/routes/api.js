@@ -14,7 +14,7 @@ router.post("/initState", function(req, res, next) {
       Sensors.find({}, { data: { $slice: -1 }, apiKey: 0 }, function(err, docs) {
             console.log(docs.length);
             if (!err) {
-                  docs = docs.filter(({ data, manageable }) => data.length > 0 || manageable);
+                  // docs = docs.filter(({ data, manageable }) => data.length > 0 || manageable);
                   res.send({ docs, status: "success" });
             } else {
                   res.send({ status: "error" });

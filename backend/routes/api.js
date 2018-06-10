@@ -41,12 +41,12 @@ router.post("/manageData", function(req, res, next) {
                                                       if (!err) {
                                                             res.send({ status: "success" });
                                                       } else {
-												res.send({status: "Vyskytl se problém s databází"})
+												res.send({status: "Vyskytl se problém při ukládání nových dat"})
                                                       }
                                                 })
                                                 .catch(e =>
                                                       res.send({
-                                                            status: "Nastala chyba, nelze kontaktovat zařízení"
+                                                            status: "Vyskytl se problém při ukládání nových dat"
                                                       })
                                                 );
                                     } else {
@@ -55,7 +55,7 @@ router.post("/manageData", function(req, res, next) {
                               })
                               .catch(e => {
                                     console.log(e);
-                                    res.send({ status: "Nastala chyba, zařízení nenalezeno v databázi" });
+                                    res.send({ status: "Nastala chyba, nelze kontaktovat zařízení" });
                               });
                   } else if (!url) {
                         res.send({ status: "url not provided" });
@@ -65,7 +65,7 @@ router.post("/manageData", function(req, res, next) {
             })
             .catch(err => {
                   console.log(err);
-                  res.send({ status: "error, cant find sensor" });
+                  res.send({ status: "Nastala chyba, zařízení nenalezeno v databázi" });
             });
 });
 

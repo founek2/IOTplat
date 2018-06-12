@@ -14,9 +14,12 @@ router.post('/', function(req, res, next) {
         if(obj.nModified === 1){
             res.send({status: "success"})
         }else {
+		   console.log("unknown APIKey: ", apiKey)
             res.send({status: "error"})
         }
         
+  }).catch(() => {
+	console.log("Catch, unknown APIKey: ", apiKey)
   })
 });
 

@@ -64,12 +64,13 @@ function SensorComponent({ classes, heading, comment, data, imgPath, created }) 
                     {key} : {prop('value', obj)} {prop('unit', obj)}
                </Typography>
           );
-     }
-     const dataComponents = compose(
+	}
+	debugger;
+     const dataComponents = data ? compose(
           map(convertDataToComponent),
           moveCreatedToEnd,
           toPairs
-     )(data);
+     )(data) : null;
      return (
           <Card className={classes.card}>
                <CardMedia

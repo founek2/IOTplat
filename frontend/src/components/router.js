@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Switch, withRouter } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import Sensors from './Sensors';
 import ControlPanel from './ControlPanel';
 import { createBrowserHistory } from 'history';

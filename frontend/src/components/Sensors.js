@@ -19,13 +19,14 @@ function createComponent({ body, created, data, title, _id, imgPath }) {
                   comment={body}
                   data={head(data)}
                   key={_id}
-                  imgPath={imgPath}
+			   imgPath={imgPath}
+			   created={created}
             />
       );
 }
 class Sensors extends Component {
       render() {
-            const { classes, state } = this.props;
+            const { state } = this.props;
             const sensorComponents = map(createComponent, state.data);
             return <div>{sensorComponents}</div>;
       }

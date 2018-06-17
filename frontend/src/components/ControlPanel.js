@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import ControlComponent from './ControlComponent';
 import {map} from 'ramda';
 
-function createComponent({ body, created, data, title, _id, imgPath, manageData }) {
+function createComponent({ title, _id, manageData }) {
 	return <ControlComponent title={title} key={_id} manageData={manageData} _id={_id} />
       
 }

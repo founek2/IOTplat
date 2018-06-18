@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
-const Sensors = require("../bin/models/sensors");
+const models = require("../bin/models/index");
+const {Sensors} = models;
 var mongoose = require("mongoose");
 var formatDate = require("../bin/utils/formatDateGraph");
 

@@ -89,23 +89,27 @@ class DetailedExpansionPanel extends Component {
 
       handleButtonClick = (e, index, type, key) => {
 		  const { buttonsState } = this.state;
-		  // console.log(e.target.getTarget)
+		  const errorCallback = () => {
+			this.setState({
+				buttonsState: buttonsState
+		    });
+		   }
             if (type === 0) {
                   const newButtonsState = update(index, [false, true], buttonsState);
                   this.setState({
                         buttonsState: newButtonsState
 			   });
-			   this.sendData(type, key)
+			   this.sendData(type, key, errorCallback)
             } else if (type === 1) {
                   const newButtonsState = update(index, [true, false], buttonsState);
                   this.setState({
                         buttonsState: newButtonsState
 			   });
-			   this.sendData(type, key)
+			   this.sendData(type, key, errorCallback)
             }
 	 };
-	 sendData = (type, key) => {
-		Api.manageData(this.props._id, {[key]: type});
+	 sendData = (type, key, errorCallback) => {
+		Api.manageData(this.props._id, {[key]: type}, errorCallback);
 	 }
       render() {
             const { classes, manageData } = this.props;

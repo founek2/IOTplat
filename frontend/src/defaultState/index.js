@@ -1,5 +1,4 @@
-export default (function() {
-     const jwt = localStorage.getItem('jwt');
+export default function(jwt) {
      return jwt
           ? JSON.parse(localStorage.getItem('state'))
           : {
@@ -16,6 +15,12 @@ export default (function() {
                  },
                  controlPanel: {
                       data: []
-                 }
+			  },
+			  loginForm: {
+				  open: false,
+			  },
+			  user: {
+				  logIn: false
+			  }
             };
-})();
+};

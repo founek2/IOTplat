@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const Sensors = require('../bin/models/sensors');
-
+const models = require('../bin/models/index');
+const {Sensors} = models;
 /* register sensor and return api key */
 router.post('/', function(req, res, next) {
 	console.log("register")

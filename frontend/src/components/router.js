@@ -17,12 +17,12 @@ const PropsRoute = ({ component, ...rest }) => {
 };
 
 const browserHistory = createBrowserHistory();
-function router({sensorsState, controlPanelState}) {
+function router({sensorsState, controlPanelState, userLevel}) {
       return (
             <Router history={browserHistory}>
                   <Switch>
-                        <PropsRoute path="/controlPanel" component={ControlPanel} state={controlPanelState} />
-                        <PropsRoute path="/" component={Sensors} state={sensorsState} />
+                        <PropsRoute path="/controlPanel" component={ControlPanel} state={controlPanelState} userLevel={userLevel} />
+                        <PropsRoute path="/" component={Sensors} state={sensorsState} userLevel={userLevel}/>
                   </Switch>
             </Router>
       );

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const Sensor = require('../bin/models/sensors');
-
+const models = require('../bin/models/index');
+const {Sensors} = models;
 /* find sensor by apiKey and save data */
 router.post('/', function(req, res, next) {
   //    const sensor = new Sensors({title: "Weather station", body: "Stanice pro měření počasí a všeho možného."})

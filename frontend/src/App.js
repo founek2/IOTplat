@@ -21,9 +21,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from './components/Snackbar';
-import { merge, assoc, filter, o, not } from 'ramda';
+import { merge, assoc, filter, o, not, assocPath } from 'ramda';
 import Api from './api';
 import defaultState from './defaultState';
+import Login from './components/login';
 
 const isManageable = ({ manageable }) => manageable;
 const notManageable = o(not, isManageable);
@@ -42,11 +43,17 @@ const styles = theme => ({
 });
 
 class App extends Component {
-     state = defaultState;
+     constructor(props){
+		super(props)
+		const jwt = localStorage.getItem('jwt');
+		this.state = defaultState(jwt);
+		if (jwt) Api.setJwt(jwt)
+		Api.setHandleError(this.handleSnackbarOpen);
+		this.initApp()
+	}
 
-     componentDidMount() {
-          Api.setHandleError(this.handleSnackbarOpen);
-          Api.initState().then(json => {
+     initApp = () => {
+		Api.initState().then(json => {
                if (json) {
                     const { sensors, controlPanel } = this.state;
                     const { docs } = json;
@@ -64,7 +71,7 @@ class App extends Component {
                     );
                }
           });
-     }
+	}
 
      handleMenuOpen = () => {
           this.setState({
@@ -106,9 +113,42 @@ class App extends Component {
                     break;
           }
      };
+     handleLoginOpen = () => {
+          const { loginForm } = this.state;
+          const newLoginForm = assoc('open', !loginForm.open, loginForm);
+          this.setState({
+               loginForm: newLoginForm
+          });
+     };
+     handleFieldChange = prop => value => {
+          const newLoginForm = assocPath(['fields', ...prop], value.target.value, this.state.loginForm);
+          this.setState({
+               loginForm: newLoginForm
+          });
+     };
+     handleLogin = (userName, password) => () => {
+          Api.login(userName, password).then(json => {
+               if (json) {
+                    const { jwt, level } = json;
+                    const { loginForm } = this.state;
+                    const newLoginForm = assoc('open', false, loginForm);
+                    this.setState({
+                         loginForm: newLoginForm,
+                         user: {
+						userName: userName,
+						logIn: true,
+						level
+                         }
+				});
+				Api.setJwt(jwt);
+				localStorage.setItem('jwt', jwt);
+				localStorage.setItem('state', JSON.stringify(this.state))
+               }
+          });
+     };
      render() {
           const { classes } = this.props;
-          const { snackbar, controlPanel, sensors } = this.state;
+          const { snackbar, controlPanel, sensors, user } = this.state;
           const fullList = (
                <div className={classes.fullList}>
                     <List component="nav" subheader={<ListSubheader component="div">Menu</ListSubheader>}>
@@ -135,7 +175,8 @@ class App extends Component {
                          </ListItem>
                     </List>
                </div>
-          );
+		);
+		
           return (
                <div>
                     <AppBar position="static">
@@ -151,7 +192,9 @@ class App extends Component {
                               <Typography variant="title" color="inherit" className={classes.flex}>
                                    IOT platforma
                               </Typography>
-                              <Button color="inherit">Login</Button>
+                              <Button color="inherit" onClick={this.handleLoginOpen}>
+                                  {(user && user.logIn) ? user.userName : "LOGIN"}
+                              </Button>
                          </Toolbar>
                     </AppBar>
                     <Drawer open={this.state.menu.open} onClose={this.handleMenuOpen}>
@@ -159,7 +202,12 @@ class App extends Component {
                               {fullList}
                          </div>
                     </Drawer>
-                    <Router sensorsState={sensors} controlPanelState={controlPanel} />
+                    <Login
+                         state={this.state.loginForm}
+                         handleClose={this.handleLoginOpen}
+                         handleLogin={this.handleLogin}
+                    />
+                    <Router sensorsState={sensors} controlPanelState={controlPanel} userLevel={user.level} />
                     <Snackbar
                          open={snackbar.open}
                          onClose={this.handleSnackbarClose}

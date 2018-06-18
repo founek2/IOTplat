@@ -1,12 +1,13 @@
 var express = require("express");
 var router = express.Router();
-const Sensor = require("../bin/models/sensors");
+const models = require('../bin/models/index');
+const {Sensors} = models;
 const fetch = require("node-fetch");
 /* find sensor by apiKey and save data */
 router.post("/", function(req, res, next) {
       //    const sensor = new Sensors({title: "Weather station", body: "Stanice pro měření počasí a všeho možného."})
       const { id, data } = req.body;
-      Sensor.findById(id, "url manageable apiKey")
+      Sensors.findById(id, "url manageable apiKey")
             .then(({ url, manageable, apiKey }) => {
                   if (manageable && url) {
 

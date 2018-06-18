@@ -65,7 +65,6 @@ function SensorComponent({ classes, heading, comment, data, imgPath, created }) 
                </Typography>
           );
 	}
-	debugger;
      const dataComponents = data ? compose(
           map(convertDataToComponent),
           moveCreatedToEnd,

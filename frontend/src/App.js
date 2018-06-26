@@ -15,6 +15,8 @@ import CloudIcon from '@material-ui/icons/Cloud';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Router, { browserHistory } from './components/router';
 import AppBar from '@material-ui/core/AppBar';
@@ -145,10 +147,43 @@ class App extends Component {
 				localStorage.setItem('state', JSON.stringify(this.state))
                }
           });
-     };
+	};
+	closeUserMenu = () => {
+		this.setState({
+			userMenu: {open: false}
+		})
+	}
+	openUserMenu = () => {
+		this.setState({
+			userMenu: {open: true}
+		})
+	}
+	handleUserMenuItem = (order) => {
+		this.closeUserMenu()
+		switch(order){
+			case 0: // setting
+				break;
+			case 1: // Account
+				break;
+			case 2: // logOut
+				this.logOut();
+				break;
+			default: 
+				break;
+		}
+	}
+	logOut = () => {
+		localStorage.removeItem("jwt");
+		Api.setJwt(null)
+		const {user} = this.state;
+		const newUser = assoc("logIn", false, user);
+		this.setState({
+			user: newUser,
+		})
+	}
      render() {
           const { classes } = this.props;
-          const { snackbar, controlPanel, sensors, user } = this.state;
+          const { snackbar, controlPanel, sensors, user, userMenu } = this.state;
           const fullList = (
                <div className={classes.fullList}>
                     <List component="nav" subheader={<ListSubheader component="div">Menu</ListSubheader>}>
@@ -192,9 +227,30 @@ class App extends Component {
                               <Typography variant="title" color="inherit" className={classes.flex}>
                                    IOT platforma
                               </Typography>
-                              <Button color="inherit" onClick={this.handleLoginOpen}>
-                                  {(user && user.logIn) ? user.userName : "LOGIN"}
+						<div>
+                              <Button
+							color="inherit"
+							onClick={user.logIn ? this.openUserMenu : this.handleLoginOpen}
+						>
+                                  {user.logIn ? user.userName : "LOGIN"}
                               </Button>
+						<Menu
+							open={userMenu.open}
+							anchorOrigin={{
+								vertical:'top',
+								horizontal: 'right',
+							}}
+							transformOrigin={{
+								vertical:'top',
+								horizontal: 'right',
+							}}
+							onClose={this.closeUserMenu}
+						>
+						<MenuItem onClick={() => this.handleUserMenuItem(0)} >nastavení</MenuItem>
+						<MenuItem onClick={() => this.handleUserMenuItem(1)} >Účet</MenuItem>
+						<MenuItem onClick={() => this.handleUserMenuItem(2)} >Odhlásit</MenuItem>
+							</Menu>
+							</div>
                          </Toolbar>
                     </AppBar>
                     <Drawer open={this.state.menu.open} onClose={this.handleMenuOpen}>

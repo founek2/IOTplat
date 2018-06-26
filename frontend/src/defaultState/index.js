@@ -4,7 +4,10 @@ export default function(jwt) {
           : {
                  menu: {
                       open: false
-                 },
+			  },
+			  userMenu: {
+				open: false,
+			  },
                  snackbar: {
                       open: false,
                       hideDuration: 6000,

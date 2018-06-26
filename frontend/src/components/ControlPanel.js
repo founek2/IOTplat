@@ -8,7 +8,6 @@ function createComponent({ title, _id, manageData }) {
 }
 
 function ControlPanel({state}) {
-		console.log(state)
 		const controlComponents = map(createComponent, state.data);
 		return (
 			<div>

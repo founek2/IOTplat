@@ -37,7 +37,6 @@ function createDetails(classes, buttonsState, handleButtonClick) {
       return (arr, index) => {
 		 const key = arr[0];
 		 const data = arr[1];
-            console.log(buttonsState, index, key);
             const description = data.description;
             return (
                   <ExpansionPanelDetails className={classes.details} key={index}>

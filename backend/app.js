@@ -48,8 +48,9 @@ app.use('/saveSensorData', saveSensorDataRoute);
 app.use('/updateSensorData', updateSensorDataRoute);
 app.use('/showGraph', showGraphRoute);
 app.use('/api/secure', function(req, res, next) {
-     const token = req.get('authorization-jwt');
-     if (token) {
+	const token = req.get('authorization-jwt');
+
+     if (token && token != "null") {
           Jwt.verify(token)
                .then(payload => {
                     req.user = payload;

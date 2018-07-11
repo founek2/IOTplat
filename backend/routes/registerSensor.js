@@ -11,10 +11,11 @@ router.post('/', function(req, res, next) {
 		  url,
 		  manageable,
 		  manageData,
-		  imgPath
+		  imgPath,
+		  type
       } = req.body.sensor;
   //    const sensor = new Sensors({title: "Weather station", body: "Stanice pro měření počasí a všeho možného."})
-      const sensor = new Sensors({title, body, url, manageable, manageData, imgPath})
+      const sensor = new Sensors({title, body, url, manageable, manageData, imgPath, type})
       sensor.save().then((createdObj) => {
             res.send({apiKey: createdObj.apiKey});
       })

@@ -9,7 +9,7 @@ const sensorSchema  = new Schema({
       data: Array, //[ { teplota: { value: 49, unit: "C" } } ]
       apiKey: { type: String, default: hat },
       url: String,
-      manageData: Object, // {relay: {state: 0, description: Ovládání světla hlavního pokoje}, led: {state: 0, description: Ovládání ledky, hidden: true}}
+      manageData: Object, // {relay: {state: 0, description: Ovládání světla hlavního pokoje, type: "on/off"}, led: {state: 0, description: Ovládání ledky, hidden: true, type: "on/off"}}
 	 manageable: Boolean,
 	 imgPath: String,
 });

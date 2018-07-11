@@ -30,7 +30,7 @@ export default new class Api {
                   }
             })
                   .then(response => response.json())
-                  .then(checkStatus)
+                  .then(this.checkStatus)
                   .catch(this.handleError);
       };
       manageData = (id, data, errorCallback) => {
@@ -44,7 +44,7 @@ export default new class Api {
                   body: JSON.stringify({ id, data })
             })
                   .then(response => response.json())
-                  .then(checkStatus)
+                  .then(this.checkStatus)
                   .catch(compose(errorCallback,this.handleError));
 	 };
 	 login = (userName, password) => {
@@ -57,7 +57,7 @@ export default new class Api {
 			 body: JSON.stringify({ userName, password })
 		})
 			 .then(response => response.json())
-			 .then(checkStatus)
+			 .then(this.checkStatus)
 			 .catch(this.handleError);
     };
 }();

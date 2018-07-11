@@ -8,8 +8,7 @@ const pubKey = fs.readFileSync(path.join(__dirname,'../../cert/public.key.pub'))
 function Jwt(){};
 Jwt.sign = function(object){
 	return new Promise(function(resolve, reject) {
-		jwt.sign(object, privKey, { algorithm: 'RS256', expiresIn: '72h' }, function(err, token) {
-			console.log("innn", err, token)
+		jwt.sign(object, privKey, { algorithm: 'RS256', expiresIn: '336h' }, function(err, token) {
 			if (!err){
 				console.log(token)
 				resolve(token)

@@ -2,14 +2,25 @@ import {compose} from 'ramda';
 const urlPrefix = "/api";
 
 export default new class Api {
-      constructor(errorHandler) {
-            this.handleError = e => console.log(e);
+      constructor() {
+		  this.handleError = e => console.log(e);
       }
-
+	 setLogOut = (fn) => {
+		this.logOut = fn;
+	 }
       setHandleError = handleError => {
             this.handleError = handleError;
 	 };
 	 setJwt = jwt => this.jwt = jwt;
+	 checkStatus = (json) => {
+		if (json.status === "success") {
+			return json;
+	    } else if (json.status === "Platnost přihlášení vypršela!"){
+			this.logOut();
+	    }else {
+			throw new Error(json.status);
+	    }
+	 }
       initState = () => {
             return fetch(urlPrefix + "/initState", {
                   method: "POST",
@@ -50,11 +61,3 @@ export default new class Api {
 			 .catch(this.handleError);
     };
 }();
-
-function checkStatus(json) {
-      if (json.status === "success") {
-            return json;
-      } else {
-            throw new Error(json.status);
-      }
-}

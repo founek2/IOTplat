@@ -51,6 +51,7 @@ class App extends Component {
 		this.state = defaultState(jwt);
 		if (jwt) Api.setJwt(jwt)
 		Api.setHandleError(this.handleSnackbarOpen);
+		Api.setLogOut(this.logOut);
 		this.initApp()
 	}
 

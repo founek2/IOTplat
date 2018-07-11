@@ -111,7 +111,7 @@ class DetailedExpansionPanel extends Component {
 		Api.manageData(this.props._id, {[key]: type}, errorCallback);
 	 }
       render() {
-            const { classes, manageData } = this.props;
+            const { classes, manageData, title } = this.props;
             const { buttonsState } = this.state;
             const arrOfKeys = toPairs(manageData).filter(arr => arr[0] !== "updated" );
             const curryedCreateDetails = createDetails(
@@ -126,7 +126,7 @@ class DetailedExpansionPanel extends Component {
                         <ExpansionPanel defaultExpanded>
                               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                                     <div className={classes.column}>
-                                          <Typography className={classes.heading}>Lustr</Typography>
+                                          <Typography className={classes.heading}>{title}</Typography>
                                     </div>
                               </ExpansionPanelSummary>
                               {details}

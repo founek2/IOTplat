@@ -56,9 +56,9 @@ app.use('/api/secure', function(req, res, next) {
                     req.user = payload;
                     next();
                })
-               .catch(e => res.send({ status: 'Platnost přihlášení vypršela!' }));
+               .catch(e => res.status(202).send({ status: 'Platnost přihlášení vypršela!' }));
      } else {
-          res.send({ status: 'Neautorizovaný uživatel!' });
+          res.status(202).send({ status: 'Neautorizovaný uživatel!' });
      }
 });
 app.use('/api', apiRoute);

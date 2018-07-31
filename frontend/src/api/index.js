@@ -4,6 +4,7 @@ const urlPrefix = "/api";
 export default new class Api {
       constructor() {
 		  this.handleError = e => console.log(e);
+		  this.jwt = '';
       }
 	 setLogOut = (fn) => {
 		this.logOut = fn;
@@ -17,6 +18,7 @@ export default new class Api {
 			return json;
 	    } else if (json.status === "Platnost přihlášení vypršela!"){
 			this.logOut();
+			throw new Error(json.status);
 	    }else {
 			throw new Error(json.status);
 	    }

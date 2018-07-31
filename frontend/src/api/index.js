@@ -45,7 +45,7 @@ export default new class Api {
             })
                   .then(response => response.json())
                   .then(this.checkStatus)
-                  .catch(compose(errorCallback,this.handleError));
+                  .catch((e) => {errorCallback(e);this.handleError(e)});
 	 };
 	 login = (userName, password) => {
 		return fetch(urlPrefix + "/login", {

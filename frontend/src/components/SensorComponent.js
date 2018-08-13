@@ -55,9 +55,9 @@ function SensorComponent({ classes, heading, comment, data, imgPath, created }) 
      function convertDataToComponent(arrayOfData) {
           const obj = nth(1, arrayOfData);
           const key = head(arrayOfData);
-          return isCreated(head(arrayOfData)) ? (
+          return isCreated(key) ? (
                <Typography component="p" className={classes.created} align="right" key={key}>
-                    {updatedBefore(new Date(created))}
+                    {updatedBefore(new Date(obj))}
                </Typography>
           ) : (
                <Typography component="p" className={classes.data} color="primary" key={key}>

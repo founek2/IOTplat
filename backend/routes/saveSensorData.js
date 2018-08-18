@@ -8,7 +8,9 @@ router.post('/', function(req, res, next) {
      const { apiKey, data } = req.body;
 
      // Sensors.update({apiKey},  { $push: { data: {...data, created: new Date()} } }).then((obj) => {
-     Sensors.update({ apiKey }, { $set: { data: [{ ...data, created: new Date() }] } })
+	const date = new Date();
+	date.setTimezoneOffset(-120);
+     Sensors.update({ apiKey }, { $set: { data: [{ ...data, created: date }] } })
           .then((obj) => {
                if (obj.nModified === 1) {
                     res.send({ status: 'success' });

@@ -81,4 +81,19 @@ app.use(function(err, req, res, next) {
      res.render('error');
 });
 
+Date.prototype.setTimezoneOffset = function(minutes) { 
+	var _minutes;
+	if (this.timezoneOffset == _minutes) {
+	    _minutes = this.getTimezoneOffset();
+	} else {
+	    _minutes = this.timezoneOffset;
+	}
+	if (arguments.length) {
+	    this.timezoneOffset = minutes;
+	} else {
+	    this.timezoneOffset = minutes = this.getTimezoneOffset();
+	}
+	return this.setTime(this.getTime() + (_minutes - minutes) * 6e4);
+ };
+ 
 module.exports = app;

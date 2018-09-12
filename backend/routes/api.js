@@ -3,16 +3,37 @@ var router = express.Router();
 const models = require('../bin/models/index');
 var mongoose = require('mongoose');
 const fetch = require('node-fetch');
-const hashPassword = require("../bin/utils/hashPasswdord");
+const hashPassword = require('../bin/utils/hashPasswdord');
 const { Sensors, Users } = models;
+
+router.post('/updateSensorState', function(req, res) {
+     const { apiKey, ...restBody } = req.body;
+     console.log('to');
+     if (apiKey) {
+          Sensors.findByApiKey(apiKey).then(doc => {
+               if (doc) {
+                    const { manageData } = doc;
+
+                    Sensors.updateDataActual(doc._id, restBody, manageData).then(neco => {
+					console.log(neco)
+                         res.send({ status: 'success' });
+                    });
+               } else {
+                    res.send({ error: 'invalidApiKey' });
+               }
+          });
+     } else {
+          res.send({ error: 'ApiKey must be provided' });
+     }
+});
 
 router.post('/initState', function(req, res, next) {
      Sensors.find({}, { data: { $slice: -1 }, apiKey: 0 }, function(err, docs) {
-          console.log(docs.length);
           if (!err) {
                // docs = docs.filter(({ data, manageable }) => data.length > 0 || manageable);
                res.send({ docs, status: 'success' });
           } else {
+               console.log(err);
                res.send({ status: 'error' });
           }
      });
@@ -93,36 +114,42 @@ router.post('/showGraph', function(req, res, next) {
 });
 
 router.post('/registerUser', function(req, res) {
-	const { userName, password } = req.body;
-	console.log(userName, password)
-	//Users.registerUser(userName, passowrd, "a", "s");¨
-	Users.findAllByUserName(userName).then((docs) => {
-		if(docs.length === 0){
-			hashPassword(password).then((hash) => {
-				const user = new Users({userName, password: hash});
-				user.save().then(() => {
-					res.send({status: "Uživatel vytvořen"})
-				}).catch(() => {
-					res.send({status: "Nastala chyba!"})
-				})
-			}).catch(() => {
-				res.send({status: "Nastala chyba!"})
-			})
-		}else {
-			res.send({status: "Uživatel již existuje"})
-		}
-	})
+     const { userName, password } = req.body;
+     console.log(userName, password);
+     //Users.registerUser(userName, passowrd, "a", "s");¨
+     Users.findAllByUserName(userName).then(docs => {
+          if (docs.length === 0) {
+               hashPassword(password)
+                    .then(hash => {
+                         const user = new Users({ userName, password: hash });
+                         user.save()
+                              .then(() => {
+                                   res.send({ status: 'Uživatel vytvořen' });
+                              })
+                              .catch(() => {
+                                   res.send({ status: 'Nastala chyba!' });
+                              });
+                    })
+                    .catch(() => {
+                         res.send({ status: 'Nastala chyba!' });
+                    });
+          } else {
+               res.send({ status: 'Uživatel již existuje' });
+          }
+     });
 });
 
-router.post("/login", function (req, res){
-	const { userName, password } = req.body;
-	Users.checkCreditals(userName,password).then(({jwt, level}) => {
-		if(jwt){
-			res.send({status: "success", jwt, level})
-		} else {
-			res.send({status: "Špatné heslo"})
-		}
-	}).catch(() => res.send({status: "Nastala chyba!"}))
-})
+router.post('/login', function(req, res) {
+     const { userName, password } = req.body;
+     Users.checkCreditals(userName, password)
+          .then(({ jwt, level }) => {
+               if (jwt) {
+                    res.send({ status: 'success', jwt, level });
+               } else {
+                    res.send({ status: 'Špatné heslo' });
+               }
+          })
+          .catch(() => res.send({ status: 'Nastala chyba!' }));
+});
 
 module.exports = router;

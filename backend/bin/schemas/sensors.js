@@ -11,7 +11,8 @@ const sensorSchema = new Schema({
      url: String,
      manageData: Object, // {relay: {state: 0, description: Ovládání světla hlavního pokoje, type: "on/off"}, led: {state: 0, description: Ovládání ledky, hidden: true, type: "on/off"}}
      manageable: Boolean,
-     imgPath: String
+	imgPath: String,
+	controllerOf: Array,
 });
 sensorSchema.statics.findByApiKey = function(apiKey) {
      return this.model('Sensors').findOne({ apiKey: apiKey });

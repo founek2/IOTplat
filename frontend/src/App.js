@@ -70,7 +70,7 @@ class App extends Component {
                               sensors: newSensors,
                               controlPanel: newControlPanel
                          },
-                         () => localStorage.setItem('state', JSON.stringify(this.state))
+                         this.saveState
                     );
                }
           });
@@ -104,18 +104,18 @@ class App extends Component {
           switch (order) {
                case 0:
                     setTimeout(this.handleMenuOpen, 170);
-                    this.setState({ route: '/' }, this.saveState);
+                    this.setState({ route: '/' });
                     break;
                case 1:
                     setTimeout(this.handleMenuOpen, 170);
-                    this.setState({ route: '/controlPanel' }, this.saveState);
+                    this.setState({ route: '/controlPanel' });
                     break;
                default:
                     setTimeout(this.handleMenuOpen, 170);
-                    this.setState({ route: '/' }, this.saveState);
+                    this.setState({ route: '/' });
                     break;
           }
-
+          setTimeout(this.saveState, 300);
      };
      handleLoginOpen = () => {
           const { loginForm } = this.state;
@@ -144,7 +144,8 @@ class App extends Component {
                                    logIn: true,
                                    level
                               }
-                         }, this.saveState
+                         },
+                         this.saveState
                     );
                     Api.setJwt(jwt);
                     localStorage.setItem('jwt', jwt);

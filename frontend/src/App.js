@@ -45,18 +45,18 @@ const styles = theme => ({
 });
 
 class App extends Component {
-     constructor(props){
-		super(props)
-		const jwt = localStorage.getItem('jwt');
-		this.state = defaultState(jwt);
-		if (jwt) Api.setJwt(jwt)
-		Api.setHandleError(this.handleSnackbarOpen);
-		Api.setLogOut(this.logOut);
-		this.initApp()
-	}
+     constructor(props) {
+          super(props);
+          const jwt = localStorage.getItem('jwt');
+          this.state = defaultState(jwt);
+          if (jwt) Api.setJwt(jwt);
+          Api.setHandleError(this.handleSnackbarOpen);
+          Api.setLogOut(this.logOut);
+          this.initApp();
+     }
 
      initApp = () => {
-		Api.initState().then(json => {
+          Api.initState().then(json => {
                if (json) {
                     const { sensors, controlPanel } = this.state;
                     const { docs } = json;
@@ -74,7 +74,7 @@ class App extends Component {
                     );
                }
           });
-	}
+     };
 
      handleMenuOpen = () => {
           this.setState({
@@ -103,18 +103,19 @@ class App extends Component {
      clickMenuItem = order => {
           switch (order) {
                case 0:
-                    browserHistory.push('/');
                     setTimeout(this.handleMenuOpen, 170);
+                    this.setState({ route: '/' }, this.saveState);
                     break;
                case 1:
-                    browserHistory.push('/controlPanel');
                     setTimeout(this.handleMenuOpen, 170);
+                    this.setState({ route: '/controlPanel' }, this.saveState);
                     break;
                default:
-                    browserHistory.push('/');
                     setTimeout(this.handleMenuOpen, 170);
+                    this.setState({ route: '/' }, this.saveState);
                     break;
           }
+
      };
      handleLoginOpen = () => {
           const { loginForm } = this.state;
@@ -135,52 +136,68 @@ class App extends Component {
                     const { jwt, level } = json;
                     const { loginForm } = this.state;
                     const newLoginForm = assoc('open', false, loginForm);
-                    this.setState({
-                         loginForm: newLoginForm,
-                         user: {
-						userName: userName,
-						logIn: true,
-						level
-                         }
-				});
-				Api.setJwt(jwt);
-				localStorage.setItem('jwt', jwt);
-				localStorage.setItem('state', JSON.stringify(this.state))
+                    this.setState(
+                         {
+                              loginForm: newLoginForm,
+                              user: {
+                                   userName: userName,
+                                   logIn: true,
+                                   level
+                              }
+                         }, this.saveState
+                    );
+                    Api.setJwt(jwt);
+                    localStorage.setItem('jwt', jwt);
                }
           });
+     };
+     closeUserMenu = () => {
+          this.setState({
+               userMenu: { open: false }
+          });
+     };
+     openUserMenu = () => {
+          this.setState({
+               userMenu: { open: true }
+          });
+     };
+     handleUserMenuItem = order => {
+          this.closeUserMenu();
+          switch (order) {
+               case 0: // setting
+                    break;
+               case 1: // Account
+                    break;
+               case 2: // logOut
+                    this.logOut();
+                    break;
+               default:
+                    break;
+          }
+     };
+     logOut = () => {
+          localStorage.removeItem('jwt');
+          localStorage.removeItem('state');
+          Api.setJwt(null);
+          const { user } = this.state;
+          const newUser = assoc('logIn', false, user);
+          this.setState({
+               user: newUser
+          });
+     };
+     handleSimpleMode = _id => {
+          if (this.state.simpleMode === _id) {
+               this.setState({
+                    simpleMode: false
+               }, this.saveState);
+          } else {
+               this.setState({
+                    simpleMode: _id
+               }, this.saveState);
+          }
 	};
-	closeUserMenu = () => {
-		this.setState({
-			userMenu: {open: false}
-		})
-	}
-	openUserMenu = () => {
-		this.setState({
-			userMenu: {open: true}
-		})
-	}
-	handleUserMenuItem = (order) => {
-		this.closeUserMenu()
-		switch(order){
-			case 0: // setting
-				break;
-			case 1: // Account
-				break;
-			case 2: // logOut
-				this.logOut();
-				break;
-			default: 
-				break;
-		}
-	}
-	logOut = () => {
-		localStorage.removeItem("jwt");
-		Api.setJwt(null)
-		const {user} = this.state;
-		const newUser = assoc("logIn", false, user);
-		this.setState({
-			user: newUser,
-		})
+	saveState = () => {
+		localStorage.setItem("state", JSON.stringify(this.state))
 	}
      render() {
           const { classes } = this.props;
@@ -211,8 +228,8 @@ class App extends Component {
                          </ListItem>
                     </List>
                </div>
-		);
-		
+          );
+
           return (
                <div>
                     <AppBar position="static">
@@ -228,30 +245,27 @@ class App extends Component {
                               <Typography variant="title" color="inherit" className={classes.flex}>
                                    IOT platforma
                               </Typography>
-						<div>
-                              <Button
-							color="inherit"
-							onClick={user.logIn ? this.openUserMenu : this.handleLoginOpen}
-						>
-                                  {user.logIn ? user.userName : "LOGIN"}
-                              </Button>
-						<Menu
-							open={userMenu.open}
-							anchorOrigin={{
-								vertical:'top',
-								horizontal: 'right',
-							}}
-							transformOrigin={{
-								vertical:'top',
-								horizontal: 'right',
-							}}
-							onClose={this.closeUserMenu}
-						>
-						<MenuItem onClick={() => this.handleUserMenuItem(0)} >nastavení</MenuItem>
-						<MenuItem onClick={() => this.handleUserMenuItem(1)} >Účet</MenuItem>
-						<MenuItem onClick={() => this.handleUserMenuItem(2)} >Odhlásit</MenuItem>
-							</Menu>
-							</div>
+                              <div>
+                                   <Button color="inherit" onClick={user.logIn ? this.openUserMenu : this.handleLoginOpen}>
+                                        {user.logIn ? user.userName : 'LOGIN'}
+                                   </Button>
+                                   <Menu
+                                        open={userMenu.open}
+                                        anchorOrigin={{
+                                             vertical: 'top',
+                                             horizontal: 'right'
+                                        }}
+                                        transformOrigin={{
+                                             vertical: 'top',
+                                             horizontal: 'right'
+                                        }}
+                                        onClose={this.closeUserMenu}
+                                   >
+                                        <MenuItem onClick={() => this.handleUserMenuItem(0)}>nastavení</MenuItem>
+                                        <MenuItem onClick={() => this.handleUserMenuItem(1)}>Účet</MenuItem>
+                                        <MenuItem onClick={() => this.handleUserMenuItem(2)}>Odhlásit</MenuItem>
+                                   </Menu>
+                              </div>
                          </Toolbar>
                     </AppBar>
                     <Drawer open={this.state.menu.open} onClose={this.handleMenuOpen}>
@@ -259,12 +273,14 @@ class App extends Component {
                               {fullList}
                          </div>
                     </Drawer>
-                    <Login
-                         state={this.state.loginForm}
-                         handleClose={this.handleLoginOpen}
-                         handleLogin={this.handleLogin}
+                    <Login state={this.state.loginForm} handleClose={this.handleLoginOpen} handleLogin={this.handleLogin} />
+                    <Router
+                         sensorsState={sensors}
+                         controlPanelState={{ ...controlPanel, simpleMode: this.state.simpleMode }}
+                         userLevel={user.level}
+                         actualRoute={this.state.route}
+                         handleSimpleMode={this.handleSimpleMode}
                     />
-                    <Router sensorsState={sensors} controlPanelState={controlPanel} userLevel={user.level} />
                     <Snackbar
                          open={snackbar.open}
                          onClose={this.handleSnackbarClose}

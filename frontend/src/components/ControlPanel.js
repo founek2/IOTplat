@@ -1,21 +1,34 @@
-import React from "react";
+import React from 'react';
 import ControlComponent from './ControlComponent';
-import {map} from 'ramda';
+import { map } from 'ramda';
 
-function createComponent({ title, _id, manageData }) {
-	return <ControlComponent title={title} key={_id} manageData={manageData} _id={_id} />
-      
+function createComponent(handleSimpleMode) {
+     return function({ title, _id, manageData }) {
+          return (
+               <ControlComponent title={title} key={_id} manageData={manageData} _id={_id} handleSimpleMode={handleSimpleMode} />
+          );
+     };
 }
 
-function ControlPanel({state}) {
-		console.log(state.data)
-		const controlComponents = map(createComponent, state.data);
-		return (
-			<div>
-				{controlComponents}
-			</div>
-		)
-	
+function ControlPanel({ state, handleSimpleMode }) {
+     if (state.simpleMode) {
+          const data = state.data.find(({ _id }) => _id === state.simpleMode);
+          const { title, _id, manageData } = data;
+          return (
+               <ControlComponent
+                    title={title}
+                    key={_id}
+                    manageData={manageData}
+                    _id={_id}
+                    handleSimpleMode={handleSimpleMode}
+                    simpleMode={state.simpleMode}
+               />
+          );
+     } else {
+          const controlComponents = map(createComponent(handleSimpleMode), state.data);
+
+          return <div>{controlComponents}</div>;
+     }
 }
 
 export default ControlPanel;

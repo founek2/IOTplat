@@ -1,6 +1,7 @@
 export default function(jwt) {
-     return jwt
-          ? JSON.parse(localStorage.getItem('state'))
+	const state = JSON.parse(localStorage.getItem('state'));
+     return state
+          ? state
           : {
                  menu: {
                       open: false
@@ -24,6 +25,7 @@ export default function(jwt) {
 			  },
 			  user: {
 				  logIn: false
-			  }
+			  },
+			  route: "/",
             };
 };

@@ -12,6 +12,9 @@ import Divider from '@material-ui/core/Divider';
 import { update, toPairs } from 'ramda';
 import indexedMap from '../utils/indexedMap';
 import Api from '../api';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+
 const styles = theme => ({
      root: {
           width: '100%'
@@ -31,13 +34,19 @@ const styles = theme => ({
      },
      offButton: {
           color: 'rgba(0, 0, 0, 0.54)'
+     },
+     simple: {
+          position: 'absolute',
+          right: '0px',
+          top: '35px',
+          right: '-8px'
      }
 });
 function createDetails(classes, buttonsState, handleButtonClick) {
      return (arr, index) => {
           const key = arr[0];
-		const data = arr[1];
-		if (data.hidden) return null;
+          const data = arr[1];
+          if (data.hidden) return null;
           const description = data.description;
           let controlButtons;
           if (data.type === 'on/off') {
@@ -64,12 +73,7 @@ function createDetails(classes, buttonsState, handleButtonClick) {
                );
           } else if (data.type === 'toogle') {
                controlButtons = (
-                    <Button
-                         onClick={e => handleButtonClick(e, index, 1, key)}
-                         color="primary"
-                         name="on"
-                         variant="raised"
-                    >
+                    <Button onClick={e => handleButtonClick(e, index, 1, key)} color="primary" name="on" variant="raised">
                          Aktivovat
                     </Button>
                );
@@ -127,9 +131,13 @@ class DetailedExpansionPanel extends Component {
      };
      sendData = (type, key, errorCallback) => {
           Api.manageData(this.props._id, { [key]: type }, errorCallback);
-     };
+	};
+	clickSimple = () => {
+		const {_id, handleSimpleMode} = this.props;
+		handleSimpleMode(_id)
+	}
      render() {
-          const { classes, manageData, title } = this.props;
+          const { classes, manageData, title, _id, simpleMode } = this.props;
           const { buttonsState } = this.state;
           const arrOfKeys = toPairs(manageData).filter(arr => arr[0] !== 'updated');
           const curryedCreateDetails = createDetails(classes, buttonsState, this.handleButtonClick);
@@ -140,9 +148,14 @@ class DetailedExpansionPanel extends Component {
                     <ExpansionPanel defaultExpanded>
                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                               <div className={classes.column}>
-                                   <Typography className={classes.heading}>{title}</Typography>
+                                   <Typography>
+                                        <span className={classes.heading}>{title}</span>
+                                   </Typography>
                               </div>
                          </ExpansionPanelSummary>
+
+                         <FormControlLabel control={<Switch value="simpleMode" checked={_id === simpleMode} onClick={this.clickSimple} />} className={classes.simple} />
+
                          {details}
                          <Divider />
                     </ExpansionPanel>

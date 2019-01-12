@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "updateFrontEnd": "npm run build --prefix ../frontend && rm -rf public/* && cp -R ../frontend/build/* public/",
     "deploy": "env NODE_ENV=production npm run updateFrontEnd && npm start",
-    "startForev": "forever start bin/www",
+    "startForev": "env NODE_ENV=production forever start bin/www",
     "stopForev": "forever stop bin/www"
   },
   "dependencies": {

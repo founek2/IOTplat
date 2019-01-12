@@ -11,5 +11,7 @@ export default function(time) {
           return 'Poslední aktualizace před ' + diff.getHours() + ' hod';
      } else if (diff.getMinutes() > 0) {
           return 'Poslední aktualizace před ' + diff.getMinutes() + ' min';
+	}else if (diff.getMinutes() === 0) {
+          return 'Aktuální';
      }
 }

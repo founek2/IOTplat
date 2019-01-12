@@ -37,7 +37,7 @@ const styles = theme => ({
      },
      simple: {
           position: 'absolute',
-          right: '0px',
+          // right: '0px',
           top: '35px',
           right: '-8px'
      }

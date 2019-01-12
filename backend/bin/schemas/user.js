@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
-const Jwt = require("../utils/jwt");
+const Jwt = require('../utils/jwt');
 
 const userSchema = new Schema({
      userName: { type: String, required: true, unique: true },
@@ -24,19 +24,21 @@ userSchema.statics.checkCreditals = function(userName, password) {
      return this.model('Users')
           .findOne({ userName: userName }, 'password level userName firstName lastName -_id')
           .then(doc => {
-			//console.log(doc)
-             return  bcrypt.compare(password, doc.password).then(res => {
-			   if(res){
-					console.log(doc)
-					doc.password = undefined;
-					return Jwt.sign(doc.toJSON()).then(token => {
-						return {jwt: token, level: doc.level}
-					 })
-
-			   }else {
-				   return false;
-			   }
-		   })
+               //console.log(doc);
+               if (doc) {
+                    return bcrypt.compare(password, doc.password).then(res => {
+                         if (res) {
+                              doc.password = undefined;
+                              return Jwt.sign(doc.toJSON()).then(token => {
+                                   return { jwt: token, level: doc.level };
+                              });
+                         } else {
+                              return {jwt:false};
+                         }
+                    });
+               }else {
+				return {jwt:null};
+			}
           });
 };
 

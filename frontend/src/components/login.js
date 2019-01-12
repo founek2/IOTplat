@@ -6,31 +6,59 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {assocPath} from 'ramda';
+import { assocPath } from 'ramda';
+
+function onEnter(callback) {
+     return event => {
+          if (event.keyCode === 13) {
+               callback(event);
+          }
+     };
+}
 
 class FormDialog extends Component {
-	state = {fields: {
-		"userName": {
-			value: "",
-			errorMessage: "",
-		},
-		"password": {
-			value: "",
-			errorMessage: "",
-		},
-	}}
-	handleFieldChange = path => value => {
+     state = {
+          fields: {
+               userName: {
+                    value: '',
+                    errorMessage: ''
+               },
+               password: {
+                    value: '',
+                    errorMessage: ''
+               }
+          }
+     };
+     handleFieldChange = path => value => {
           const newFields = assocPath([...path], value.target.value, this.state.fields);
           this.setState({
                fields: newFields
           });
-     };
+	};
+	cleanFields = () => {
+		this.setState({
+			fields: {
+				userName: {
+					value: '',
+					errorMessage: ''
+				},
+				password: {
+					value: '',
+					errorMessage: ''
+				}
+			}
+		})
+	}
      render() {
-		const { state, handleClose, handleLogin } = this.props;
-		const {userName, password} = this.state.fields;
+          const { state, handleClose, handleLogin } = this.props;
+          const { userName, password } = this.state.fields;
           const { open } = state;
-          const handleUseChange = this.handleFieldChange(['userName', 'value']);
+          const handleUserChange = this.handleFieldChange(['userName', 'value']);
           const handlePasswordChange = this.handleFieldChange(['password', 'value']);
+
+          const logIn = () => {
+				handleLogin(userName.value, password.value, this.cleanFields);
+          };
           return (
                <div>
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
@@ -43,9 +71,10 @@ class FormDialog extends Component {
                                    label="Uživatelské jméno"
                                    name="userName"
                                    type="text"
-                                   onChange={handleUseChange}
-							fullWidth
-							value={userName.value}
+                                   onChange={handleUserChange}
+                                   fullWidth
+                                   value={userName.value}
+                                   onKeyDown={onEnter(logIn)}
                               />
                               <TextField
                                    margin="dense"
@@ -53,15 +82,16 @@ class FormDialog extends Component {
                                    type="password"
                                    name="password"
                                    onChange={handlePasswordChange}
-							fullWidth
-							value={password.value}
+                                   fullWidth
+                                   value={password.value}
+                                   onKeyDown={onEnter(logIn)}
                               />
                          </DialogContent>
                          <DialogActions>
                               <Button onClick={handleClose} color="primary">
                                    Zrušit
                               </Button>
-                              <Button onClick={handleLogin(userName.value, password.value)} color="primary">
+                              <Button onClick={logIn} color="primary">
                                    Přihlásit
                               </Button>
                          </DialogActions>

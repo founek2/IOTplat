@@ -130,16 +130,22 @@ router.post('/registerUser', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
-     const { userName, password } = req.body;
-     Users.checkCreditals(userName, password)
+	const { userName, password } = req.body;
+	if (userName.length > 2 && password.length > 2){
+		Users.checkCreditals(userName, password)
           .then(({ jwt, level }) => {
                if (jwt) {
                     res.send({ status: 'success', jwt, level });
-               } else {
+               } else if (jwt === false) {
                     res.send({ status: 'Špatné heslo' });
-               }
+               } else if (jwt === null) {
+				res.send({ status: 'Neznámí uživatel' });
+			}
           })
           .catch(() => res.send({ status: 'Nastala chyba!' }));
+	}else {
+		res.send({ status: 'Minimální délka jména/hesla je 3!' })
+	}
 });
 
 function updateSensorAndSendUpdate(id, data, res) {

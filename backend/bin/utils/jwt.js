@@ -10,7 +10,8 @@ Jwt.sign = function(object){
 	return new Promise(function(resolve, reject) {
 		jwt.sign(object, privKey, { algorithm: 'RS256', expiresIn: '336h' }, function(err, token) {
 			if (!err){
-				console.log(token)
+				//console.log(token)
+				console.log("API token created")
 				resolve(token)
 			}else {
 				reject();

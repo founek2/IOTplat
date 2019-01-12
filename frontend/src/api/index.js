@@ -1,4 +1,3 @@
-import {compose} from 'ramda';
 const urlPrefix = "/api";
 
 export default new class Api {

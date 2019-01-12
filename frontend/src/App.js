@@ -18,7 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import Router, { browserHistory } from './components/router';
+import Router from './components/router';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -52,8 +52,10 @@ class App extends Component {
           if (jwt) Api.setJwt(jwt);
           Api.setHandleError(this.handleSnackbarOpen);
           Api.setLogOut(this.logOut);
+	}
+	componentDidMount(){
           this.initApp();
-     }
+	}
 
      initApp = () => {
           Api.initState().then(json => {
@@ -94,7 +96,7 @@ class App extends Component {
                typeof e.message === 'string'
                     ? merge(snackbarState, { open: true, message: e.message })
                     : merge(snackbarState, { open: true, message: 'Není připojení k internetu!' });
-          console.log(e.message);
+          //console.log(e.message);
           this.setState({
                snackbar: newSnackState
           });
@@ -115,7 +117,7 @@ class App extends Component {
                     this.setState({ route: '/' });
                     break;
           }
-          setTimeout(this.saveState, 300);
+          setTimeout(this.saveState, 300); // to save after menu closed
      };
      handleLoginOpen = () => {
           const { loginForm } = this.state;
@@ -130,27 +132,36 @@ class App extends Component {
                loginForm: newLoginForm
           });
      };
-     handleLogin = (userName, password) => () => {
-          Api.login(userName, password).then(json => {
-               if (json) {
-                    const { jwt, level } = json;
-                    const { loginForm } = this.state;
-                    const newLoginForm = assoc('open', false, loginForm);
-                    this.setState(
-                         {
-                              loginForm: newLoginForm,
-                              user: {
-                                   userName: userName,
-                                   logIn: true,
-                                   level
-                              }
-                         },
-                         this.saveState
-                    );
-                    Api.setJwt(jwt);
-                    localStorage.setItem('jwt', jwt);
+     handleLogin = (userName, password, cleanInputs) => {
+          if (userName.length > 2) {
+               if (password.length > 2) {
+                    Api.login(userName, password).then(json => {
+                         if (json) {
+						cleanInputs();
+                              const { jwt, level } = json;
+                              const { loginForm } = this.state;
+                              const newLoginForm = assoc('open', false, loginForm);
+                              this.setState(
+                                   {
+                                        loginForm: newLoginForm,
+                                        user: {
+                                             userName: userName,
+                                             logIn: true,
+                                             level
+                                        }
+                                   },
+                                   this.saveState
+                              );
+                              Api.setJwt(jwt);
+                              localStorage.setItem('jwt', jwt);
+                         }
+                    });
+               } else {
+                    this.handleSnackbarOpen(new Error('Minimální délka hesla je 3'));
                }
-          });
+          } else {
+               this.handleSnackbarOpen(new Error('Minimální délka jména je 3'));
+          }
      };
      closeUserMenu = () => {
           this.setState({
@@ -188,18 +199,24 @@ class App extends Component {
      };
      handleSimpleMode = _id => {
           if (this.state.simpleMode === _id) {
-               this.setState({
-                    simpleMode: false
-               }, this.saveState);
+               this.setState(
+                    {
+                         simpleMode: false
+                    },
+                    this.saveState
+               );
           } else {
-               this.setState({
-                    simpleMode: _id
-               }, this.saveState);
+               this.setState(
+                    {
+                         simpleMode: _id
+                    },
+                    this.saveState
+               );
           }
-	};
-	saveState = () => {
-		localStorage.setItem("state", JSON.stringify(this.state))
-	}
+     };
+     saveState = () => {
+          localStorage.setItem('state', JSON.stringify(this.state));
+     };
      render() {
           const { classes } = this.props;
           const { snackbar, controlPanel, sensors, user, userMenu } = this.state;

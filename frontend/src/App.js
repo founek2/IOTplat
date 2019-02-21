@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import './App.css';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,6 +11,7 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import MenuIcon from '@material-ui/icons/Menu';
 import BuildIcon from '@material-ui/icons/Build';
 import CloudIcon from '@material-ui/icons/Cloud';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -52,10 +52,16 @@ class App extends Component {
           if (jwt) Api.setJwt(jwt);
           Api.setHandleError(this.handleSnackbarOpen);
           Api.setLogOut(this.logOut);
-	}
-	componentDidMount(){
+
+          window.addEventListener(
+               'focus',
+               this.initApp,
+               false
+          );
+     }
+     componentDidMount() {
           this.initApp();
-	}
+     }
 
      initApp = () => {
           Api.initState().then(json => {
@@ -137,7 +143,7 @@ class App extends Component {
                if (password.length > 2) {
                     Api.login(userName, password).then(json => {
                          if (json) {
-						cleanInputs();
+                              cleanInputs();
                               const { jwt, level } = json;
                               const { loginForm } = this.state;
                               const newLoginForm = assoc('open', false, loginForm);
@@ -264,9 +270,13 @@ class App extends Component {
                                    IOT platforma
                               </Typography>
                               <div>
+                                   <IconButton onClick={() => this.initApp()}>
+                                        <RefreshIcon />
+                                   </IconButton>
                                    <Button color="inherit" onClick={user.logIn ? this.openUserMenu : this.handleLoginOpen}>
                                         {user.logIn ? user.userName : 'LOGIN'}
                                    </Button>
+
                                    <Menu
                                         open={userMenu.open}
                                         anchorOrigin={{

@@ -9,7 +9,8 @@ const Jwt = require('./bin/utils/jwt');
 
 //mongoose.connect("mongodb://localhost/IOT");
 mongoose
-     .connect('mongodb://localhost/IOT')
+	//.connect('mongodb://iotserver.lan/IOT')
+	.connect("mongodb://localhost/IOT")
      .then(() => {
           console.log('connected to mongoDB');
      })
@@ -47,6 +48,7 @@ app.use('/registerSensor', registerSensorRoute);
 app.use('/saveSensorData', saveSensorDataRoute);
 app.use('/updateSensorData', updateSensorDataRoute);
 app.use('/showGraph', showGraphRoute);
+
 app.use('/api/secure', function(req, res, next) {
 	const token = req.get('authorization-jwt');
 

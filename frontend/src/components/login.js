@@ -4,17 +4,9 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { assocPath } from 'ramda';
-
-function onEnter(callback) {
-     return event => {
-          if (event.keyCode === 13) {
-               callback(event);
-          }
-     };
-}
+import onEnter from '../utils/onEnter'
 
 class FormDialog extends Component {
      state = {
@@ -62,9 +54,8 @@ class FormDialog extends Component {
           return (
                <div>
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                         <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                         <DialogTitle id="form-dialog-title">Přihlášení</DialogTitle>
                          <DialogContent>
-                              <DialogContentText>Zadejte svoje přihlašovací údaje.</DialogContentText>
                               <TextField
                                    autoFocus
                                    margin="normal"

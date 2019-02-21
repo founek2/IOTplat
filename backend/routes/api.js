@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 const fetch = require('node-fetch');
 const hashPassword = require('../bin/utils/hashPasswdord');
 const { Sensors, Users } = models;
+const { subscribeUserToTopic, unSubscribeUserFromTopic } = require('../bin/utils/pushMessages');
 
 /**
  * for Sensor init - mostly on powerOff to send actual state
@@ -130,41 +131,40 @@ router.post('/registerUser', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
-	const { userName, password } = req.body;
-	if (userName.length > 2 && password.length > 2){
-		Users.checkCreditals(userName, password)
-          .then(({ jwt, level }) => {
-               if (jwt) {
-                    res.send({ status: 'success', jwt, level });
-               } else if (jwt === false) {
-                    res.send({ status: 'Špatné heslo' });
-               } else if (jwt === null) {
-				res.send({ status: 'Neznámí uživatel' });
-			}
-          })
-          .catch(() => res.send({ status: 'Nastala chyba!' }));
-	}else {
-		res.send({ status: 'Minimální délka jména/hesla je 3!' })
-	}
+     const { userName, password } = req.body;
+     if (userName.length > 2 && password.length > 2) {
+          Users.checkCreditals(userName, password)
+               .then(({ jwt, level }) => {
+                    if (jwt) {
+                         res.send({ status: 'success', jwt, level });
+                    } else if (jwt === false) {
+                         res.send({ status: 'Špatné heslo' });
+                    } else if (jwt === null) {
+                         res.send({ status: 'Neznámí uživatel' });
+                    }
+               })
+               .catch(() => res.send({ status: 'Nastala chyba!' }));
+     } else {
+          res.send({ status: 'Minimální délka jména/hesla je 3!' });
+     }
 });
 
 function updateSensorAndSendUpdate(id, data, res) {
-	console.log("data", data)
+     console.log('data', data);
 
      Sensors.findById(id, 'url manageable apiKey manageData')
           .then(({ url, manageable, apiKey, manageData }) => {
                if (manageable && url) {
-
-				for (const key in data) {
-					const val = data[key];
-					if (val === "change") {
-						if (manageData[key].state === 0) {
-							data[key] = 1;
-						} else if (manageData[key].state === 1){
-							data[key] = 0;
-						}
-					}
-				}
+                    for (const key in data) {
+                         const val = data[key];
+                         if (val === 'change') {
+                              if (manageData[key].state === 0) {
+                                   data[key] = 1;
+                              } else if (manageData[key].state === 1) {
+                                   data[key] = 0;
+                              }
+                         }
+                    }
                     fetch(url, {
                          method: 'POST',
                          body: JSON.stringify({ ...data, apiKey })
@@ -206,4 +206,37 @@ function updateSensorAndSendUpdate(id, data, res) {
                res.send({ status: 'Nastala chyba, zařízení nenalezeno v databázi' });
           });
 }
+
+router.post('/secure/notifySensor', function(req, res) {
+     const { notifyObj, messageToken, _id } = req.body;
+     const { sensor } = notifyObj;
+     delete notifyObj.sensor;
+
+     Sensors.setNotification(_id, sensor, notifyObj)
+          .then(() => {
+               subscribeUserToTopic(_id, sensor, messageToken).then(() => {
+                    res.send({ status: 'success' });
+               });
+          })
+          .catch(err => {
+               console.log(err);
+               res.send({ status: 'Nastala chyba, zařízení nenalezeno v databázi' });
+          });
+});
+
+router.delete('/secure/notifySensor', function(req, res) {
+     const { notifyObj, messageToken, _id } = req.body;
+     const { sensor } = notifyObj;
+
+     Sensors.setNotification(_id, sensor, {})
+          .then(() => {
+               unSubscribeUserFromTopic(_id, sensor, messageToken).then(() => {
+                    res.send({ status: 'success' });
+               });
+          })
+          .catch(err => {
+               console.log(err);
+               res.send({ status: 'Nastala chyba, zařízení nenalezeno v databázi' });
+          });
+});
 module.exports = router;

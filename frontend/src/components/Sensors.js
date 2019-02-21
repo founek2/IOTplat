@@ -18,7 +18,8 @@ function createComponent({ body, created, data, title, _id, imgPath }) {
                   heading={title}
                   comment={body}
                   data={head(data)}
-                  key={_id}
+			   key={_id}
+			   _id={_id}
 			   imgPath={imgPath}
 			   created={created}
             />

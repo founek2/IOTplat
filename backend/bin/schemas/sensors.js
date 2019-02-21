@@ -13,6 +13,7 @@ const sensorSchema = new Schema({
      manageable: Boolean,
 	imgPath: String,
 	controllerOf: Array,
+	notification: Object // {relay: {interval: 5, boundary: 10, action: "over"}}
 });
 sensorSchema.statics.findByApiKey = function(apiKey) {
      return this.model('Sensors').findOne({ apiKey: apiKey });
@@ -39,6 +40,14 @@ sensorSchema.statics.getDataForGraph = function(id, targetTime) {
           { $match: { 'data.created': { $gte: new Date(Number(targetTime)) } } },
           { $group: { _id: '$_id', data: { $push: '$data' }, title: { $last: '$title' } } }
      ]);
+};
+
+sensorSchema.statics.setNotification = function(id, senzor, obj) {
+     return this.model('Sensors').findByIdAndUpdate(id, {
+          $set: {
+               notification: { [senzor]: obj}
+          }
+     });
 };
 
 module.exports = sensorSchema;

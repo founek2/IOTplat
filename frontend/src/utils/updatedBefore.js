@@ -1,6 +1,11 @@
 export default function(time) {
-     const now = new Date();
+	const now = new Date();
+	
+	if (now - time < 0)
+		return 'Aktuální';
+
 	const diff = new Date(now - time);
+
      if ((now.getYear() - time.getYear()) > 0) {
           return 'Poslední aktualizace před ' + Number(now.getYear() - time.getYear()) + ' rok';
      } else if (diff.getMonth() > 0) {

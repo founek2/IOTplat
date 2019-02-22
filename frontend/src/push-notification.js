@@ -21,7 +21,7 @@ export const initializeFirebase = () => {
                     const { title, body, icon, click_action } = payload.notification;
 
                     // If it's okay let's create a notification
-                    var notification = new Notification(title, {body, icon, click_action});
+                    new Notification(title, {body, icon, click_action});
                }
           }
      });

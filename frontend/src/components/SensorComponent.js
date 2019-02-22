@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { map, toPairs, compose, prop, nth, head, assoc } from 'ramda';
+import { map, toPairs, compose, prop, nth, head } from 'ramda';
 import updatedBefore from '../utils/updatedBefore';
 import { askForPermissioToReceiveNotifications } from './../push-notification';
 import NotificationDialog from './notificationDialog';
@@ -140,7 +140,7 @@ class SensorComponent extends React.Component {
 					open={this.state.notifyDialog.open}
 					handleClose={() => this.openNotifyDialog(false)} 
 					handleConfirm={this.confirmNotify}
-					sensors={Object.keys(data).filter((el) => el != "created")}
+					sensors={Object.keys(data).filter((el) => el !== "created")}
 					handleRemoveNotification={this.removeNotification}
 				/>
                </Card>

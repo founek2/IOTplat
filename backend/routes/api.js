@@ -56,15 +56,14 @@ router.post('/controllSensor', function(req, res) {
  * get initState for frontend
  */
 router.post('/initState', function(req, res, next) {
-     Sensors.find({}, { data: { $slice: -1 }, apiKey: 0 }, function(err, docs) {
-          if (!err) {
+     Sensors.find({}, { data: { $slice: -1 }, apiKey: 0 }).sort([['_id', 1]]).then(docs => {
                // docs = docs.filter(({ data, manageable }) => data.length > 0 || manageable);
                res.send({ docs, status: 'success' });
-          } else {
-               console.log(err);
-               res.send({ status: 'error' });
-          }
-     });
+    
+	}).catch(err => {
+		console.log(err);
+		res.send({ status: 'error' });
+	})
      console.log('initState');
 });
 

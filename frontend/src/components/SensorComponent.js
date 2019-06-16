@@ -26,11 +26,17 @@ function moveCreatedToEnd(arr) {
      without.push(created);
      return without;
 }
-const styles = {
+const styles = theme => ({
      card: {
-          maxWidth: 400,
+          width: "25%",
           float: 'left',
-          marginBottom: 1
+		marginBottom: 1,
+		height: 522,
+		[theme.breakpoints.down('xs')]: {
+			width: '100%',
+			height: "auto"
+		},
+		position: "relative"
      },
      media: {
           height: 0,
@@ -41,15 +47,25 @@ const styles = {
           fontSize: 15
      },
      dataContainer: {
-          paddingTop: 17
+		paddingTop: 17,
+		[theme.breakpoints.down('xs')]: {
+			paddingBottom: 20
+		},
      },
      created: {
           fontSize: 11
      },
      'p+p': {
           paddingTop: 100
-     }
-};
+	},
+	actions: {
+		position: "absolute",
+		bottom: 15,
+		[theme.breakpoints.down('xs')]: {
+			bottom: 0
+		},
+	}
+});
 function isCreated(string) {
      return string === 'created';
 }
@@ -128,7 +144,7 @@ class SensorComponent extends React.Component {
                          <Typography component="p">{comment}</Typography>
                          <div className={classes.dataContainer}>{dataComponents}</div>
                     </CardContent>
-                    <CardActions>
+                    <CardActions className={classes.actions}>
                          <Button size="small" color="primary" onClick={() => this.openNotifyDialog(true)}>
                               Notify
                          </Button>
@@ -140,7 +156,7 @@ class SensorComponent extends React.Component {
 					open={this.state.notifyDialog.open}
 					handleClose={() => this.openNotifyDialog(false)} 
 					handleConfirm={this.confirmNotify}
-					sensors={Object.keys(data).filter((el) => el !== "created")}
+					sensors={data ? Object.keys(data).filter((el) => el !== "created") : []}
 					handleRemoveNotification={this.removeNotification}
 				/>
                </Card>

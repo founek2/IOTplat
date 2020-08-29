@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 const Jwt = require('./bin/utils/jwt');
 const config = require("./config")
 mongoose.Promise = require('bluebird');
+const apiRoute = require('./routes/api');
 
 console.log("config", config)
 
@@ -16,14 +17,13 @@ mongoose.connect(`mongodb://${config.db.userName}:${config.db.password}@${config
         console.error("App starting error:", err.stack);
     });
 
-const apiRoute = require('./routes/api');
+
 
 var app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 app.use('/api/secure', function (req, res, next) {
     const token = req.get('authorization-jwt');
@@ -56,7 +56,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.send()
 });
 
 Date.prototype.setTimezoneOffset = function (minutes) {

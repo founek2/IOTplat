@@ -1,6 +1,4 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -9,6 +7,8 @@ const Jwt = require('./bin/utils/jwt');
 const config = require("./config")
 mongoose.Promise = require('bluebird');
 
+console.log("config", config)
+
 //mongoose.connect("mongodb://localhost/IOT");
 mongoose.connect(`mongodb://${config.db.userName}:${config.db.password}@${config.db.url}/${config.db.dbName}`,
     { useMongoClient: true }).catch(err => {
@@ -16,34 +16,14 @@ mongoose.connect(`mongodb://${config.db.userName}:${config.db.password}@${config
         console.error("App starting error:", err.stack);
     });
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-const registerSensorRoute = require('./routes/registerSensor');
-const saveSensorDataRoute = require('./routes/saveSensorData');
-const updateSensorDataRoute = require('./routes/updateSensorData');
-const showGraphRoute = require('./routes/showGraph');
 const apiRoute = require('./routes/api');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', index);
-app.use('/users', users);
-app.use('/registerSensor', registerSensorRoute);
-app.use('/saveSensorData', saveSensorDataRoute);
-app.use('/updateSensorData', updateSensorDataRoute);
-app.use('/showGraph', showGraphRoute);
 
 app.use('/api/secure', function (req, res, next) {
     const token = req.get('authorization-jwt');
